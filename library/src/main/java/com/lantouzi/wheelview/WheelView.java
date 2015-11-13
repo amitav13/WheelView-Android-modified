@@ -236,7 +236,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 		start = Math.max(start, -mViewScopeSize * 2);
 		end = Math.min(end, mMarkCount + mViewScopeSize * 2);
 
-		// 对两端的绘制范围进行扩展
+		// extends both ends
 		if (mCenterIndex == mMarkCount - 1) {
 			end += mViewScopeSize;
 		} else if (mCenterIndex == 0) {
@@ -246,7 +246,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 		float x = start * mIntervalDis;
 
 		float markHeight =  mHeight - mBottomSpace - mCenterTextSize - mTopSpace;
-		// 小刻度的Y方向缩小量
+		// small scale Y offset
 		float smallMarkShrinkY = markHeight * (1 - mMarkRatio) / 2f;
 		smallMarkShrinkY = Math.min((markHeight - mMarkWidth) / 2f, smallMarkShrinkY);
 
