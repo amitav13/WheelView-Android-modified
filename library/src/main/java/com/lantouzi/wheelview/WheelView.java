@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewCompat;
 import android.text.TextPaint;
@@ -469,6 +471,57 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 			mFling = true;
 			fling((int) -velocityX, 0);
 			return true;
+		}
+	}
+
+	@Override
+	public Parcelable onSaveInstanceState() {
+		Parcelable superState = super.onSaveInstanceState();
+		SavedState ss = new SavedState(superState);
+		ss.index = getSelectedPosition();
+		return ss;
+	}
+
+	@Override
+	public void onRestoreInstanceState(Parcelable state) {
+		SavedState ss = (SavedState) state;
+		super.onRestoreInstanceState(ss.getSuperState());
+		selectIndex(ss.index);
+		requestLayout();
+	}
+
+	static class SavedState extends BaseSavedState {
+		int index;
+		public static final Parcelable.Creator<SavedState> CREATOR
+				= new Parcelable.Creator<SavedState>() {
+			public SavedState createFromParcel(Parcel in) {
+				return new SavedState(in);
+			}
+
+			public SavedState[] newArray(int size) {
+				return new SavedState[size];
+			}
+		};
+		SavedState(Parcelable superState) {
+			super(superState);
+		}
+
+		private SavedState(Parcel in) {
+			super(in);
+			index = (int) in.readValue(null);
+		}
+
+		@Override
+		public void writeToParcel(Parcel out, int flags) {
+			super.writeToParcel(out, flags);
+			out.writeValue(index);
+		}
+
+		@Override
+		public String toString() {
+			return "WheelView.SavedState{"
+					+ Integer.toHexString(System.identityHashCode(this))
+					+ " index=" + index + "}";
 		}
 	}
 
