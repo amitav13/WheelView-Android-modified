@@ -526,6 +526,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 	}
 
 	public interface OnWheelItemSelectedListener {
+		// FIXME(kyleduo): 15/12/4 a lot of calls.
 		void onWheelItemSelected(int position);
 	}
 }
