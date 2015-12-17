@@ -1,7 +1,18 @@
 # WheelView-Android
 Selector with wheel view, applicable to selecting money or other short length values.
 
+
+Use with Gradle:
+---
+
+```
+dependencies {
+  compile 'com.lantouzi.wheelview:library:1.0.1'
+}
+```
+
 Screenshot of Demo:
+---
 ![Demo](https://raw.githubusercontent.com/lantouzi/WheelView-Android/master/preview/demo.jpg)
 
 Usage
@@ -34,3 +45,4 @@ License
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
+
