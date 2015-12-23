@@ -7,7 +7,7 @@ Use with Gradle:
 
 ```
 dependencies {
-  compile 'com.lantouzi.wheelview:library:1.0.1'
+  compile 'com.lantouzi.wheelview:library:1.1.0'
 }
 ```
 
@@ -17,7 +17,7 @@ Screenshot of Demo:
 
 Usage
 ---
-Style the view in xml:
+### Style the view in xml:
 
 * **lwvHighlightColor** highlight color for selected item and the cursor.
 * **lwvMarkColor** color of mark on normal status.
@@ -28,6 +28,24 @@ Style the view in xml:
 * **lwvMarkTextSize** text size of mark text on normal status.
 * **lwvCenterMarkTextSize** text size of the center mark text (on selected status)
 * **lwvAdditionalCenterMark** additional text used for unit of the center mark.
+
+### Listener
+
+```
+public interface OnWheelItemSelectedListener {
+	// Called each time when the center index changed.
+	void onWheelItemChanged(WheelView wheelView, int position);
+
+	// Called only when the center index selected and wheel never moving to others.
+	void onWheelItemSelected(WheelView wheelView, int position);
+}
+```
+
+
+### Limit scope of selection.
+*(Added in 1.1.0)*
+
+* **setMinSelectableIndex/setMaxSelectableIndex** limit min/max index whitch is selectable in code.
 
 Check out the demo project for more information.
 

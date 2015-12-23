@@ -22,6 +22,7 @@ import android.widget.OverScroller;
 
 import com.lantouzi.wheelview.library.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 
 	private Paint mMarkPaint;
 	private TextPaint mMarkTextPaint;
-	private int mCenterIndex;
+	private int mCenterIndex = -1;
 
 	private int mHighlightColor, mMarkTextColor;
 	private int mMarkColor, mFadeMarkColor;
@@ -63,6 +64,9 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 	private GestureDetectorCompat mGestureDetectorCompat;
 	// scroll control args ---- end
 
+	private int mLastSelectedIndex = -1;
+	private int mMinSelectableIndex = Integer.MIN_VALUE;
+	private int mMaxSelectableIndex = Integer.MAX_VALUE;
 
 	public WheelView(Context context) {
 		super(context);
@@ -92,17 +96,17 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 		mNormalTextSize = density * 18;
 		mBottomSpace = density * 6;
 
-		TypedArray ta = attrs == null ? null : getContext().obtainStyledAttributes(attrs, R.styleable.WheelView);
+		TypedArray ta = attrs == null ? null : getContext().obtainStyledAttributes(attrs, R.styleable.lwvWheelView);
 		if (ta != null) {
-			mHighlightColor = ta.getColor(R.styleable.WheelView_lwvHighlightColor, mHighlightColor);
-			mMarkTextColor = ta.getColor(R.styleable.WheelView_lwvMarkTextColor, mMarkTextColor);
-			mMarkColor = ta.getColor(R.styleable.WheelView_lwvMarkColor, mMarkColor);
-			mIntervalFactor = ta.getFloat(R.styleable.WheelView_lwvIntervalFactor, mIntervalFactor);
-			mMarkRatio = ta.getFloat(R.styleable.WheelView_lwvMarkRatio, mMarkRatio);
-			mAdditionCenterMark = ta.getString(R.styleable.WheelView_lwvAdditionalCenterMark);
-			mCenterTextSize = ta.getDimension(R.styleable.WheelView_lwvCenterMarkTextSize, mCenterTextSize);
-			mNormalTextSize = ta.getDimension(R.styleable.WheelView_lwvMarkTextSize, mNormalTextSize);
-			mCursorSize = ta.getDimension(R.styleable.WheelView_lwvCursorSize, mCursorSize);
+			mHighlightColor = ta.getColor(R.styleable.lwvWheelView_lwvHighlightColor, mHighlightColor);
+			mMarkTextColor = ta.getColor(R.styleable.lwvWheelView_lwvMarkTextColor, mMarkTextColor);
+			mMarkColor = ta.getColor(R.styleable.lwvWheelView_lwvMarkColor, mMarkColor);
+			mIntervalFactor = ta.getFloat(R.styleable.lwvWheelView_lwvIntervalFactor, mIntervalFactor);
+			mMarkRatio = ta.getFloat(R.styleable.lwvWheelView_lwvMarkRatio, mMarkRatio);
+			mAdditionCenterMark = ta.getString(R.styleable.lwvWheelView_lwvAdditionalCenterMark);
+			mCenterTextSize = ta.getDimension(R.styleable.lwvWheelView_lwvCenterMarkTextSize, mCenterTextSize);
+			mNormalTextSize = ta.getDimension(R.styleable.lwvWheelView_lwvMarkTextSize, mNormalTextSize);
+			mCursorSize = ta.getDimension(R.styleable.lwvWheelView_lwvCursorSize, mCursorSize);
 		}
 		mFadeMarkColor = mHighlightColor & 0xAAFFFFFF;
 		mIntervalFactor = Math.max(1, mIntervalFactor);
@@ -198,7 +202,11 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 	}
 
 	public void fling(int velocityX, int velocityY) {
-		mScroller.fling(getScrollX(), getScrollY(), velocityX, velocityY, (int) -mMaxOverScrollDistance, (int) (mContentRectF.width() - mMaxOverScrollDistance), 0, 0, (int) mMaxOverScrollDistance, 0);
+		mScroller.fling(getScrollX(), getScrollY(),
+				velocityX, velocityY,
+				(int) (-mMaxOverScrollDistance + mMinSelectableIndex * mIntervalDis), (int) (mContentRectF.width() - mMaxOverScrollDistance - (mMarkCount - 1 - mMaxSelectableIndex) * mIntervalDis),
+				0, 0,
+				(int) mMaxOverScrollDistance, 0);
 		ViewCompat.postInvalidateOnAnimation(this);
 	}
 
@@ -237,15 +245,15 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 		end = Math.min(end, mMarkCount + mViewScopeSize * 2);
 
 		// extends both ends
-		if (mCenterIndex == mMarkCount - 1) {
+		if (mCenterIndex == mMaxSelectableIndex) {
 			end += mViewScopeSize;
-		} else if (mCenterIndex == 0) {
+		} else if (mCenterIndex == mMinSelectableIndex) {
 			start -= mViewScopeSize;
 		}
 
 		float x = start * mIntervalDis;
 
-		float markHeight =  mHeight - mBottomSpace - mCenterTextSize - mTopSpace;
+		float markHeight = mHeight - mBottomSpace - mCenterTextSize - mTopSpace;
 		// small scale Y offset
 		float smallMarkShrinkY = markHeight * (1 - mMarkRatio) / 2f;
 		smallMarkShrinkY = Math.min((markHeight - mMarkWidth) / 2f, smallMarkShrinkY);
@@ -313,18 +321,8 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 		}
 		boolean ret = mGestureDetectorCompat.onTouchEvent(event);
 		if (!mFling && MotionEvent.ACTION_UP == event.getAction()) {
-			if (getScrollX() < -mMaxOverScrollDistance) {
-				mScroller.startScroll(getScrollX(), 0, (int) -mMaxOverScrollDistance - getScrollX(), 0);
-				invalidate();
-				ret = true;
-			} else if (getScrollX() > mContentRectF.width() - mMaxOverScrollDistance) {
-				mScroller.startScroll(getScrollX(), 0, (int) (mContentRectF.width() - mMaxOverScrollDistance) - getScrollX(), 0);
-				invalidate();
-				ret = true;
-			} else {
-				autoSettle();
-				ret = true;
-			}
+			autoSettle();
+			ret = true;
 		}
 		return ret || super.onTouchEvent(event);
 	}
@@ -354,19 +352,40 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 		int sx = getScrollX();
 		float dx = mCenterIndex * mIntervalDis - sx - mMaxOverScrollDistance;
 		mScroller.startScroll(sx, 0, (int) dx, 0);
-		invalidate();
+		postInvalidate();
+		if (mLastSelectedIndex != mCenterIndex) {
+			mLastSelectedIndex = mCenterIndex;
+			if (null != mOnWheelItemSelectedListener) {
+				mOnWheelItemSelectedListener.onWheelItemSelected(this, mCenterIndex);
+			}
+		}
+	}
+
+	/**
+	 * limit center index in bounds.
+	 *
+	 * @param center
+	 * @return
+	 */
+	private int safeCenter(int center) {
+		if (center < mMinSelectableIndex) {
+			center = mMinSelectableIndex;
+		} else if (center > mMaxSelectableIndex) {
+			center = mMaxSelectableIndex;
+		}
+		return center;
 	}
 
 	private void refreshCenter(int offsetX) {
 		int offset = (int) (offsetX + mMaxOverScrollDistance);
-		mCenterIndex = Math.round(offset / mIntervalDis);
-		if (mCenterIndex < 0) {
-			mCenterIndex = 0;
-		} else if (mCenterIndex > mMarkCount - 1) {
-			mCenterIndex = mMarkCount - 1;
+		int tempIndex = Math.round(offset / mIntervalDis);
+		tempIndex = safeCenter(tempIndex);
+		if (mCenterIndex == tempIndex) {
+			return;
 		}
+		mCenterIndex = tempIndex;
 		if (null != mOnWheelItemSelectedListener) {
-			mOnWheelItemSelectedListener.onWheelItemSelected(mCenterIndex);
+			mOnWheelItemSelectedListener.onWheelItemChanged(this, mCenterIndex);
 		}
 	}
 
@@ -395,13 +414,52 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 		invalidate();
 	}
 
+	public int getMinSelectableIndex() {
+		return mMinSelectableIndex;
+	}
+
+	public void setMinSelectableIndex(int minSelectableIndex) {
+		if (minSelectableIndex > mMaxSelectableIndex) {
+			minSelectableIndex = mMaxSelectableIndex;
+		}
+		mMinSelectableIndex = minSelectableIndex;
+		int afterCenter = safeCenter(mCenterIndex);
+		if (afterCenter != mCenterIndex) {
+			selectIndex(afterCenter);
+		}
+	}
+
+	public int getMaxSelectableIndex() {
+		return mMaxSelectableIndex;
+	}
+
+	public void setMaxSelectableIndex(int maxSelectableIndex) {
+		if (maxSelectableIndex < mMinSelectableIndex) {
+			maxSelectableIndex = mMinSelectableIndex;
+		}
+		mMaxSelectableIndex = maxSelectableIndex;
+		int afterCenter = safeCenter(mCenterIndex);
+		if (afterCenter != mCenterIndex) {
+			selectIndex(afterCenter);
+		}
+	}
+
 	public List<String> getItems() {
 		return mItems;
 	}
 
 	public void setItems(List<String> items) {
-		mItems = items;
+		if (mItems == null) {
+			mItems = new ArrayList<>();
+		} else {
+			mItems.clear();
+		}
+		mItems.addAll(items);
 		mMarkCount = null == mItems ? 0 : mItems.size();
+		if (mMarkCount > 0) {
+			mMinSelectableIndex = Math.max(mMinSelectableIndex, 0);
+			mMaxSelectableIndex = Math.min(mMaxSelectableIndex, mMarkCount - 1);
+		}
 		mCenterIndex = Math.min(mCenterIndex, mMarkCount);
 		calcIntervalDis();
 		invalidate();
@@ -442,19 +500,20 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 
 	@Override
 	public void onLongPress(MotionEvent e) {
+
 	}
 
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 		float dis = distanceX;
 		float scrollX = getScrollX();
-		if (scrollX < 2 * -mMaxOverScrollDistance) {
+		if (scrollX < mMinSelectableIndex * mIntervalDis - 2 * mMaxOverScrollDistance) {
 			dis = 0;
-		} else if (scrollX < -mMaxOverScrollDistance) {
+		} else if (scrollX < mMinSelectableIndex * mIntervalDis - mMaxOverScrollDistance) {
 			dis = distanceX / 4.f;
-		} else if (scrollX > mContentRectF.width()) {
+		} else if (scrollX > mContentRectF.width() - (mMarkCount - mMaxSelectableIndex - 1) * mIntervalDis) {
 			dis = 0;
-		} else if (scrollX > mContentRectF.width() - mMaxOverScrollDistance) {
+		} else if (scrollX > mContentRectF.width() - (mMarkCount - mMaxSelectableIndex - 1) * mIntervalDis - mMaxOverScrollDistance) {
 			dis = distanceX / 4.f;
 		}
 		scrollBy((int) dis, 0);
@@ -465,7 +524,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 		float scrollX = getScrollX();
-		if (scrollX < -mMaxOverScrollDistance || scrollX > mContentRectF.width() - mMaxOverScrollDistance) {
+		if (scrollX < -mMaxOverScrollDistance + mMinSelectableIndex * mIntervalDis || scrollX > mContentRectF.width() - mMaxOverScrollDistance - (mMarkCount - 1 - mMaxSelectableIndex) * mIntervalDis) {
 			return false;
 		} else {
 			mFling = true;
@@ -479,6 +538,8 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 		Parcelable superState = super.onSaveInstanceState();
 		SavedState ss = new SavedState(superState);
 		ss.index = getSelectedPosition();
+		ss.min = mMinSelectableIndex;
+		ss.max = mMaxSelectableIndex;
 		return ss;
 	}
 
@@ -486,12 +547,19 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 	public void onRestoreInstanceState(Parcelable state) {
 		SavedState ss = (SavedState) state;
 		super.onRestoreInstanceState(ss.getSuperState());
+		mMinSelectableIndex = ss.min;
+		mMaxSelectableIndex = ss.max;
 		selectIndex(ss.index);
 		requestLayout();
 	}
 
+	public interface OnWheelItemSelectedListener {
+		void onWheelItemChanged(WheelView wheelView, int position);
+
+		void onWheelItemSelected(WheelView wheelView, int position);
+	}
+
 	static class SavedState extends BaseSavedState {
-		int index;
 		public static final Parcelable.Creator<SavedState> CREATOR
 				= new Parcelable.Creator<SavedState>() {
 			public SavedState createFromParcel(Parcel in) {
@@ -502,31 +570,34 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 				return new SavedState[size];
 			}
 		};
+		int index;
+		int min;
+		int max;
+
 		SavedState(Parcelable superState) {
 			super(superState);
 		}
 
 		private SavedState(Parcel in) {
 			super(in);
-			index = (int) in.readValue(null);
+			index = in.readInt();
+			min = in.readInt();
+			max = in.readInt();
 		}
 
 		@Override
 		public void writeToParcel(Parcel out, int flags) {
 			super.writeToParcel(out, flags);
-			out.writeValue(index);
+			out.writeInt(index);
+			out.writeInt(min);
+			out.writeInt(max);
 		}
 
 		@Override
 		public String toString() {
 			return "WheelView.SavedState{"
 					+ Integer.toHexString(System.identityHashCode(this))
-					+ " index=" + index + "}";
+					+ " index=" + index + " min=" + min + " max=" + max + "}";
 		}
-	}
-
-	public interface OnWheelItemSelectedListener {
-		// FIXME(kyleduo): 15/12/4 a lot of calls.
-		void onWheelItemSelected(int position);
 	}
 }

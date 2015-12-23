@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<declare-styleable name="WheelView">
+	<declare-styleable name="lwvWheelView">
 		<attr name="lwvHighlightColor" format="color|reference"/>
 		<attr name="lwvMarkColor" format="color|reference"/>
 		<attr name="lwvMarkTextColor" format="color|reference"/>
@@ -9,7 +9,6 @@
 		<attr name="lwvCursorSize" format="dimension"/>
 		<attr name="lwvMarkTextSize" format="dimension"/>
 		<attr name="lwvCenterMarkTextSize" format="dimension"/>
-		<attr name="lwvHighlightMarkTextSize" format="dimension"/>
 		<attr name="lwvAdditionalCenterMark" format="string|reference"/>
 	</declare-styleable>
 </resources>

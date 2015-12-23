@@ -75,6 +75,13 @@
 			app:lwvMarkTextSize="12sp"/>
 
 		<TextView
+			android:id="@+id/changed_tv"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="8dp"
+			android:gravity="center"/>
+
+		<TextView
 			android:id="@+id/selected_tv"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

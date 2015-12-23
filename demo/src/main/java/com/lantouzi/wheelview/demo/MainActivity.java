@@ -13,7 +13,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
 	private WheelView mWheelView, mWheelView2, mWheelView3, mWheelView4, mWheelView5;
-	private TextView mSelectedTv;
+	private TextView mSelectedTv, mChangedTv;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 		mWheelView4 = (WheelView) findViewById(R.id.wheelview4);
 		mWheelView5 = (WheelView) findViewById(R.id.wheelview5);
 		mSelectedTv = (TextView) findViewById(R.id.selected_tv);
+		mChangedTv = (TextView) findViewById(R.id.changed_tv);
 
 		final List<String> items = new ArrayList<>();
 		for (int i = 1; i <= 40; i++) {
@@ -72,10 +73,26 @@ public class MainActivity extends AppCompatActivity {
 		mWheelView4.setItems(items);
 
 		mWheelView5.setItems(items);
+		mWheelView5.setMinSelectableIndex(3);
+		mWheelView5.setMaxSelectableIndex(items.size() - 3);
+
+		items.remove(items.size() - 1);
+		items.remove(items.size() - 2);
+		items.remove(items.size() - 3);
+		items.remove(items.size() - 4);
+
+		mSelectedTv.setText(String.format("onWheelItemSelected：%1$s", ""));
+		mChangedTv.setText(String.format("onWheelItemChanged：%1$s", ""));
+
 		mWheelView5.setOnWheelItemSelectedListener(new WheelView.OnWheelItemSelectedListener() {
 			@Override
-			public void onWheelItemSelected(int position) {
-				mSelectedTv.setText("选择：" + items.get(position) + "万");
+			public void onWheelItemSelected(WheelView wheelView, int position) {
+				mSelectedTv.setText(String.format("onWheelItemSelected：%1$s", wheelView.getItems().get(position)));
+			}
+
+			@Override
+			public void onWheelItemChanged(WheelView wheelView, int position) {
+				mChangedTv.setText(String.format("onWheelItemChanged：%1$s", wheelView.getItems().get(position)));
 			}
 		});
 
