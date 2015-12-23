@@ -316,7 +316,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if (mItems == null || mItems.size() == 0) {
+		if (mItems == null || mItems.size() == 0 || !isEnabled()) {
 			return false;
 		}
 		boolean ret = mGestureDetectorCompat.onTouchEvent(event);

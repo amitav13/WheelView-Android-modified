@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 		mWheelView3.setAdditionCenterMark("m");
 
 		mWheelView4.setItems(items);
+		mWheelView4.setEnabled(false);
 
 		mWheelView5.setItems(items);
 		mWheelView5.setMinSelectableIndex(3);

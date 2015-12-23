@@ -7,13 +7,13 @@ Use with Gradle:
 
 ```
 dependencies {
-  compile 'com.lantouzi.wheelview:library:1.1.0'
+  compile 'com.lantouzi.wheelview:library:1.1.1'
 }
 ```
 
 Screenshot of Demo:
 ---
-![Demo](https://raw.githubusercontent.com/lantouzi/WheelView-Android/master/preview/demo.jpg)
+![Demo](https://raw.githubusercontent.com/lantouzi/WheelView-Android/master/preview/demo.png)
 
 Usage
 ---
@@ -43,7 +43,7 @@ public interface OnWheelItemSelectedListener {
 
 
 ### Limit scope of selection.
-*(Added in 1.1.0)*
+*(Added in 1.1.1)*
 
 * **setMinSelectableIndex/setMaxSelectableIndex** limit min/max index whitch is selectable in code.
 
