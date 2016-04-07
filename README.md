@@ -7,7 +7,7 @@ Use with Gradle:
 
 ```
 dependencies {
-  compile 'com.lantouzi.wheelview:library:1.1.1'
+  compile 'com.lantouzi.wheelview:library:1.1.2'
 }
 ```
 
