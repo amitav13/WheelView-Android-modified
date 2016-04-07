@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
 		mWheelView3.setItems(items3);
 		mWheelView3.setAdditionCenterMark("m");
 
-		mWheelView4.setItems(items);
-		mWheelView4.setEnabled(false);
+//		mWheelView4.setItems(items);
+//		mWheelView4.setEnabled(false);
 
 		mWheelView5.setItems(items);
 		mWheelView5.setMinSelectableIndex(3);
@@ -96,6 +96,13 @@ public class MainActivity extends AppCompatActivity {
 				mChangedTv.setText(String.format("onWheelItemChanged：%1$s", wheelView.getItems().get(position)));
 			}
 		});
+
+		mWheelView4.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				mWheelView4.setItems(items);
+			}
+		}, 3000);
 
 	}
 }

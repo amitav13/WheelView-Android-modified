@@ -460,6 +460,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 			mMinSelectableIndex = Math.max(mMinSelectableIndex, 0);
 			mMaxSelectableIndex = Math.min(mMaxSelectableIndex, mMarkCount - 1);
 		}
+		mContentRectF.set(0, 0, (mMarkCount - 1) * mIntervalDis, getMeasuredHeight());
 		mCenterIndex = Math.min(mCenterIndex, mMarkCount);
 		calcIntervalDis();
 		invalidate();
