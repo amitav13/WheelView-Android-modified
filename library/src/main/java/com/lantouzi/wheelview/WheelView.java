@@ -14,6 +14,7 @@ import android.support.v4.view.ViewCompat;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
@@ -26,11 +27,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by kyle on 15/11/9.
+ * Modified from https://github.com/lantouzi/WheelView-Android.
+ * Sample project with history of changes here: https://github.com/amitav13/WheelView-Android-modified
  */
 public class WheelView extends View implements GestureDetector.OnGestureListener {
-	public static final float DEFAULT_INTERVAL_FACTOR = 1.2f;
+	public static final float DEFAULT_INTERVAL_FACTOR = 1.5f;
 	public static final float DEFAULT_MARK_RATIO = 0.7f;
+
+	public static final int HIGHLIGHT_SP_SIZE = 40;
+	public static final int NORMAL_SP_SIZE = 27;
+	public static final int RUPEE1_SP_SIZE = 16;
+	public static final int RUPEE2_SP_SIZE = 14;
+	public static final String RUPEE = "₹";
 
 	private Paint mMarkPaint;
 	private TextPaint mMarkTextPaint;
@@ -68,6 +76,10 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 	private int mMinSelectableIndex = Integer.MIN_VALUE;
 	private int mMaxSelectableIndex = Integer.MAX_VALUE;
 
+	private int mRupeeSize1;
+	private int mRupeeSize2;
+	private Rect mTempBounds;
+
 	public WheelView(Context context) {
 		super(context);
 		init(null);
@@ -85,15 +97,24 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 
 	protected void init(AttributeSet attrs) {
 		float density = getResources().getDisplayMetrics().density;
-		mCenterMarkWidth = (int) (density * 1.5f + 0.5f);
-		mMarkWidth = density;
+		mCenterMarkWidth = 0;
+		mMarkWidth = 0;
 
-		mHighlightColor = 0xFFF74C39;
-		mMarkTextColor = 0xFF666666;
+		mHighlightColor = 0xFFFFFFFF;
+		mMarkTextColor = 0x80666666;
 		mMarkColor = 0xFFEEEEEE;
-		mCursorSize = density * 18;
-		mCenterTextSize = density * 22;
-		mNormalTextSize = density * 18;
+		mCursorSize = 0;
+		mCenterTextSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				HIGHLIGHT_SP_SIZE, getResources().getDisplayMetrics());
+		;
+		mNormalTextSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				NORMAL_SP_SIZE, getResources().getDisplayMetrics());
+		mRupeeSize1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				RUPEE1_SP_SIZE, getResources().getDisplayMetrics());
+		mRupeeSize2 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				RUPEE2_SP_SIZE, getResources().getDisplayMetrics());
+		mTempBounds = new Rect();
+
 		mBottomSpace = density * 6;
 
 		TypedArray ta = attrs == null ? null : getContext().obtainStyledAttributes(attrs, R.styleable.lwvWheelView);
@@ -155,7 +176,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 		}
 
 		if (!TextUtils.isEmpty(mAdditionCenterMark)) {
-			mMarkTextPaint.setTextSize(mNormalTextSize);
+			mMarkTextPaint.setTextSize(mRupeeSize1);
 			mMarkTextPaint.getTextBounds(mAdditionCenterMark, 0, mAdditionCenterMark.length(), temp);
 			mAdditionCenterMarkWidth = temp.width();
 			max += temp.width();
@@ -277,33 +298,52 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 					mMarkPaint.setColor(mMarkColor);
 				}
 
-				if (offset == 0) {
-					// center mark
-					mMarkPaint.setStrokeWidth(mCenterMarkWidth);
-					canvas.drawLine(ox, mTopSpace, ox, mTopSpace + markHeight, mMarkPaint);
-				} else {
-					// other small mark
-					mMarkPaint.setStrokeWidth(mMarkWidth);
-					canvas.drawLine(ox, mTopSpace + smallMarkShrinkY, ox, mTopSpace + markHeight - smallMarkShrinkY, mMarkPaint);
-				}
+//				if (offset == 0) {
+//					// center mark
+//					mMarkPaint.setStrokeWidth(mCenterMarkWidth);
+//					canvas.drawLine(ox, mTopSpace, ox, mTopSpace + markHeight, mMarkPaint);
+//				} else {
+//					// other small mark
+//					mMarkPaint.setStrokeWidth(mMarkWidth);
+//					canvas.drawLine(ox, mTopSpace + smallMarkShrinkY, ox, mTopSpace + markHeight - smallMarkShrinkY, mMarkPaint);
+//				}
 			}
 
 			// mark text
 			if (mMarkCount > 0 && i >= 0 && i < mMarkCount) {
 				CharSequence temp = mItems.get(i);
+				//temp = "₹" + temp;
 				if (mCenterIndex == i) {
 					mMarkTextPaint.setColor(mHighlightColor);
-					mMarkTextPaint.setTextSize(mCenterTextSize);
+
 					if (!TextUtils.isEmpty(mAdditionCenterMark)) {
+						//draw center mark
 						float off = mAdditionCenterMarkWidth / 2f;
 						float tsize = mMarkTextPaint.measureText(temp, 0, temp.length());
 						canvas.drawText(temp, 0, temp.length(), x - off, mHeight - mBottomSpace, mMarkTextPaint);
 						mMarkTextPaint.setTextSize(mNormalTextSize);
 						canvas.drawText(mAdditionCenterMark, x + tsize / 2f, mHeight - mBottomSpace, mMarkTextPaint);
 					} else {
-						canvas.drawText(temp, 0, temp.length(), x, mHeight - mBottomSpace, mMarkTextPaint);
+						//draw highlighted text
+						float off = mMarkTextPaint.measureText(RUPEE);
+						float tsize = mMarkTextPaint.measureText(temp, 0, temp.length());
+
+						//draw number
+						mMarkTextPaint.setTextSize(mCenterTextSize);
+						canvas.drawText(temp, 0, temp.length(), x + off, mHeight - mBottomSpace , mMarkTextPaint);
+
+						mMarkTextPaint.getTextBounds(temp.toString(), 0, temp.length(), mTempBounds);
+						int height = mTempBounds.height();
+
+						//draw rupee
+						mMarkTextPaint.setTextSize(mRupeeSize1);
+						mMarkTextPaint.getTextBounds(temp.toString(), 0, temp.length(), mTempBounds);
+						height -= mTempBounds.height();
+
+						canvas.drawText(RUPEE, 0, RUPEE.length(), x - off - tsize / 2f, mHeight - mBottomSpace - height , mMarkTextPaint);
 					}
 				} else {
+					//draw non-highlighted text
 					mMarkTextPaint.setColor(mMarkTextColor);
 					mMarkTextPaint.setTextSize(mNormalTextSize);
 					canvas.drawText(temp, 0, temp.length(), x, mHeight - mBottomSpace, mMarkTextPaint);

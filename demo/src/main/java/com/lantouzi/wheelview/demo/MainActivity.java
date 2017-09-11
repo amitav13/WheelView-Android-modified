@@ -1,7 +1,12 @@
 package com.lantouzi.wheelview.demo;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.widget.TextView;
 
 import com.lantouzi.wheelview.R;
@@ -29,13 +34,13 @@ public class MainActivity extends AppCompatActivity {
 		mChangedTv = (TextView) findViewById(R.id.changed_tv);
 
 		final List<String> items = new ArrayList<>();
-		for (int i = 1; i <= 40; i++) {
+		for (int i = 1; i <= 50; i++) {
 			items.add(String.valueOf(i * 1000));
 		}
 
 		mWheelView.setItems(items);
-		mWheelView.selectIndex(8);
-		mWheelView.setAdditionCenterMark("元");
+		mWheelView.selectIndex(49);
+//		mWheelView.setAdditionCenterMark(WheelView.RUPEE);
 
 		List<String> items2 = new ArrayList<>();
 		items2.add("一月");
