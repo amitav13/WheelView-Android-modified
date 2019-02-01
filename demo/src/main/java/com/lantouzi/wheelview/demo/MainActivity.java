@@ -1,13 +1,9 @@
 package com.lantouzi.wheelview.demo;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.lantouzi.wheelview.R;
 import com.lantouzi.wheelview.WheelView;
@@ -25,13 +21,13 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		mWheelView = (WheelView) findViewById(R.id.wheelview);
-		mWheelView2 = (WheelView) findViewById(R.id.wheelview2);
-		mWheelView3 = (WheelView) findViewById(R.id.wheelview3);
-		mWheelView4 = (WheelView) findViewById(R.id.wheelview4);
-		mWheelView5 = (WheelView) findViewById(R.id.wheelview5);
-		mSelectedTv = (TextView) findViewById(R.id.selected_tv);
-		mChangedTv = (TextView) findViewById(R.id.changed_tv);
+		mWheelView = findViewById(R.id.wheelview);
+		mWheelView2 = findViewById(R.id.wheelview2);
+		mWheelView3 = findViewById(R.id.wheelview3);
+		mWheelView4 = findViewById(R.id.wheelview4);
+		mWheelView5 = findViewById(R.id.wheelview5);
+		mSelectedTv = findViewById(R.id.selected_tv);
+		mChangedTv = findViewById(R.id.changed_tv);
 
 		final List<String> items = new ArrayList<>();
 		for (int i = 1; i <= 50; i++) {
