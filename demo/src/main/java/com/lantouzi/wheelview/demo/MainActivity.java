@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
 		mChangedTv = findViewById(R.id.changed_tv);
 
 		final List<String> items = new ArrayList<>();
-		for (int i = 1; i <= 50; i++) {
-			items.add(String.valueOf(i * 1000));
+		for (int i = 30; i <= 250; i++) {
+			items.add(String.valueOf(i));
 		}
 
 		mWheelView.setItems(items);

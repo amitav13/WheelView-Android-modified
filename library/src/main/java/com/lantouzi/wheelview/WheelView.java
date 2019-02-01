@@ -35,11 +35,12 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 	public static final float DEFAULT_INTERVAL_FACTOR = 1.5f;
 	public static final float DEFAULT_MARK_RATIO = 0.7f;
 
-	public static final int HIGHLIGHT_SP_SIZE = 40;
-	public static final int NORMAL_SP_SIZE = 27;
-	public static final int RUPEE1_SP_SIZE = 16;
-	public static final int RUPEE2_SP_SIZE = 14;
-	public static final String RUPEE = "₹";
+	public static final int HIGHLIGHT_SP_SIZE = 75;
+	public static final float NORMAL_SP_SIZE = 62.5f;
+	public static final float SMALL_SP_SIZE = 50f;
+//	public static final int RUPEE1_SP_SIZE = 16;
+//	public static final int RUPEE2_SP_SIZE = 14;
+//	public static final String RUPEE = "₹";
 
 	private Paint mMarkPaint;
 	private TextPaint mMarkTextPaint;
@@ -107,13 +108,12 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 		mCursorSize = 0;
 		mCenterTextSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
 				HIGHLIGHT_SP_SIZE, getResources().getDisplayMetrics());
-		;
 		mNormalTextSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
 				NORMAL_SP_SIZE, getResources().getDisplayMetrics());
-		mRupeeSize1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-				RUPEE1_SP_SIZE, getResources().getDisplayMetrics());
-		mRupeeSize2 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-				RUPEE2_SP_SIZE, getResources().getDisplayMetrics());
+//		mRupeeSize1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+//				RUPEE1_SP_SIZE, getResources().getDisplayMetrics());
+//		mRupeeSize2 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+//				RUPEE2_SP_SIZE, getResources().getDisplayMetrics());
 		mTempBounds = new Rect();
 
 		mBottomSpace = density * 6;
@@ -326,22 +326,24 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 						canvas.drawText(mAdditionCenterMark, x + tsize / 2f, mHeight - mBottomSpace, mMarkTextPaint);
 					} else {
 						//draw highlighted text
-						float off = mMarkTextPaint.measureText(RUPEE);
+//						float off = mMarkTextPaint.measureText(RUPEE);
 						float tsize = mMarkTextPaint.measureText(temp, 0, temp.length());
 
 						//draw number
 						mMarkTextPaint.setTextSize(mCenterTextSize);
-						canvas.drawText(temp, 0, temp.length(), x + off, mHeight - mBottomSpace , mMarkTextPaint);
+						canvas.drawText(temp, 0, temp.length(), x, mHeight - mBottomSpace , mMarkTextPaint);
 
 						mMarkTextPaint.getTextBounds(temp.toString(), 0, temp.length(), mTempBounds);
 						int height = mTempBounds.height();
 
 						//draw rupee
+						/*
 						mMarkTextPaint.setTextSize(mRupeeSize1);
 						mMarkTextPaint.getTextBounds(temp.toString(), 0, temp.length(), mTempBounds);
 						height -= mTempBounds.height();
 
 						canvas.drawText(RUPEE, 0, RUPEE.length(), x - off - tsize / 2f, mHeight - mBottomSpace - height , mMarkTextPaint);
+						 */
 					}
 				} else {
 					//draw non-highlighted text
