@@ -1,6 +1,8 @@
 package com.lantouzi.wheelview.demo;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,8 +15,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-	private WheelView mWheelView, mWheelView2, mWheelView3, mWheelView4, mWheelView5;
+	private WheelView mWheelView, mWheelView2, mWheelView3;
 	private TextView mSelectedTv, mChangedTv;
+	private Button previous;
+	private Button next;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +28,13 @@ public class MainActivity extends AppCompatActivity {
 		mWheelView = findViewById(R.id.wheelview);
 		mWheelView2 = findViewById(R.id.wheelview2);
 		mWheelView3 = findViewById(R.id.wheelview3);
-		mWheelView4 = findViewById(R.id.wheelview4);
-		mWheelView5 = findViewById(R.id.wheelview5);
+//		mWheelView4 = findViewById(R.id.wheelview4);
+//		mWheelView5 = findViewById(R.id.wheelview5);
 		mSelectedTv = findViewById(R.id.selected_tv);
 		mChangedTv = findViewById(R.id.changed_tv);
+		previous = findViewById(R.id.previous);
+		next = findViewById(R.id.next);
+
 
 		final List<String> items = new ArrayList<>();
 		for (int i = 30; i <= 250; i++) {
@@ -36,6 +43,22 @@ public class MainActivity extends AppCompatActivity {
 
 		mWheelView.setItems(items);
 		mWheelView.selectIndex(49);
+		previous.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				int currentIndex = mWheelView.getSelectedPosition();
+				mWheelView.smoothSelectIndex(currentIndex - 1);
+			}
+		});
+		next.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				int currentIndex = mWheelView.getSelectedPosition();
+				mWheelView.smoothSelectIndex(currentIndex + 1);
+			}
+		});
+
+
 //		mWheelView.setAdditionCenterMark(WheelView.RUPEE);
 
 		List<String> items2 = new ArrayList<>();
@@ -74,10 +97,6 @@ public class MainActivity extends AppCompatActivity {
 //		mWheelView4.setItems(items);
 //		mWheelView4.setEnabled(false);
 
-		mWheelView5.setItems(items);
-		mWheelView5.setMinSelectableIndex(3);
-		mWheelView5.setMaxSelectableIndex(items.size() - 3);
-
 		items.remove(items.size() - 1);
 		items.remove(items.size() - 2);
 		items.remove(items.size() - 3);
@@ -86,24 +105,24 @@ public class MainActivity extends AppCompatActivity {
 		mSelectedTv.setText(String.format("onWheelItemSelected：%1$s", ""));
 		mChangedTv.setText(String.format("onWheelItemChanged：%1$s", ""));
 
-		mWheelView5.setOnWheelItemSelectedListener(new WheelView.OnWheelItemSelectedListener() {
-			@Override
-			public void onWheelItemSelected(WheelView wheelView, int position) {
-				mSelectedTv.setText(String.format("onWheelItemSelected：%1$s", wheelView.getItems().get(position)));
-			}
-
-			@Override
-			public void onWheelItemChanged(WheelView wheelView, int position) {
-				mChangedTv.setText(String.format("onWheelItemChanged：%1$s", wheelView.getItems().get(position)));
-			}
-		});
-
-		mWheelView4.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				mWheelView4.setItems(items);
-			}
-		}, 3000);
+//		mWheelView5.setOnWheelItemSelectedListener(new WheelView.OnWheelItemSelectedListener() {
+//			@Override
+//			public void onWheelItemSelected(WheelView wheelView, int position) {
+//				mSelectedTv.setText(String.format("onWheelItemSelected：%1$s", wheelView.getItems().get(position)));
+//			}
+//
+//			@Override
+//			public void onWheelItemChanged(WheelView wheelView, int position) {
+//				mChangedTv.setText(String.format("onWheelItemChanged：%1$s", wheelView.getItems().get(position)));
+//			}
+//		});
+//
+//		mWheelView4.postDelayed(new Runnable() {
+//			@Override
+//			public void run() {
+//				mWheelView4.setItems(items);
+//			}
+//		}, 3000);
 
 	}
 }

@@ -22,14 +22,13 @@
 
 			<com.lantouzi.wheelview.WheelView
 				android:id="@+id/wheelview"
-				android:layout_width="match_parent"
+				android:layout_width="wrap_content"
 				android:layout_height="90dp"
 				android:layout_marginTop="8dp"
 				android:layout_marginRight="10dp"
 				android:layout_marginLeft="10dp"
 				android:background="#121212"
-				app:lwvMarkTextColor="#FFF"
-				app:lwvHighlightColor = ""
+				app:lwvIntervalFactor="1.3"
 				/>
 
 			<com.lantouzi.wheelview.WheelView
@@ -54,31 +53,6 @@
 
 		</LinearLayout>
 
-		<com.lantouzi.wheelview.WheelView
-			android:id="@+id/wheelview4"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="16dp"
-			android:background="#222222"
-			app:lwvAdditionalCenterMark="元"
-			app:lwvHighlightColor="#31B1E6"
-			app:lwvMarkColor="#EEEEEE"
-			app:lwvMarkTextColor="#CACACA"/>
-
-		<com.lantouzi.wheelview.WheelView
-			android:id="@+id/wheelview5"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="16dp"
-			android:background="#222222"
-			app:lwvAdditionalCenterMark="元"
-			app:lwvCenterMarkTextSize="14sp"
-			app:lwvCursorSize="10dp"
-			app:lwvHighlightColor="#31B1E6"
-			app:lwvMarkColor="#EEEEEE"
-			app:lwvMarkTextColor="#CACACA"
-			app:lwvMarkTextSize="12sp"/>
-
 		<TextView
 			android:id="@+id/changed_tv"
 			android:layout_width="match_parent"
@@ -92,5 +66,19 @@
 			android:layout_height="wrap_content"
 			android:layout_margin="8dp"
 			android:gravity="center"/>
+
+        <Button
+            android:id="@+id/previous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Previous"
+            />
+
+        <Button
+            android:id="@+id/next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            />
 	</LinearLayout>
 </ScrollView>
